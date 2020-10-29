@@ -12,7 +12,7 @@ const User = require('../models/User.model');
 const routeGuard = require('../configs/route-guard.config');
 
 // .post() route ==> to process form data
-router.post('/api/signup', (req, res, next) => {
+router.post('/signup', (req, res, next) => {
   const { username, email, password } = req.body;
 
   console.log(username, email, password);
@@ -66,7 +66,7 @@ router.post('/api/signup', (req, res, next) => {
     .catch(err => next(err));
 });
 
-router.post('/api/login', (req, res, next) => {
+router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, failureDetails) => {
     if (err) {
       res.status(500).json({ message: 'Something went wrong with database query.' });
@@ -86,12 +86,12 @@ router.post('/api/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.post('/api/logout', routeGuard, (req, res, next) => {
+router.post('/logout', routeGuard, (req, res, next) => {
   req.logout();
   res.status(200).json({ message: 'Logout successful!' });
 });
 
-router.get('/api/isLoggedIn', (req, res) => {
+router.get('/isLoggedIn', (req, res) => {
   if (req.user) {
     console.log('here: ', req.user);
     req.user.passwordHash = undefined;
