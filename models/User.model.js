@@ -20,9 +20,18 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required.']
     },
-    photo: {
+    profileImg: {
       type: String,
-      default: 'https://cdn3.iconfinder.com/data/icons/vector-icons-6/96/256-512.png'
+      default: 'https://icon-library.com/images/profile-picture-icon/profile-picture-icon-20.jpg'
+    },
+    myTasks: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Task"}]
+    },
+    comments: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Comment"}]
+    },
+    projects: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Project"}]
     }
   },
   {
