@@ -6,9 +6,6 @@ const projectSchema = new Schema (
             type: String,
             required: true
         },
-        teams: {
-            type: [{type: Schema.Types.ObjectId, ref: "Team"}]
-        },
         members: {
             type: [{ type: Schema.Types.ObjectId, ref: "User"}]
         },
