@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const router = new Router();
-
 const mongoose = require('mongoose');
 
 const bcryptjs = require('bcryptjs');
@@ -43,8 +42,6 @@ router.post('/signup', (req, res, next) => {
         passwordHash: hashedPassword
       })
         .then(user => {
-          // user.passwordHash = undefined;
-          // res.status(200).json({ user });
           req.login(user, err => {
             if (err) return res.status(500).json({ message: 'Something went wrong with login!' });
             user.passwordHash = undefined;
