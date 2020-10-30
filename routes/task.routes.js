@@ -19,7 +19,6 @@ router.post('/tasks', (req, res, next) => {
 
 router.get('/tasks', (req, res) => {
   Task.find()
-    .populate('User')
     .then(tasksFromDB => res.status(200).json({ tasks: tasksFromDB }))
     .catch(err => next(err));
 });
@@ -42,7 +41,7 @@ router.post('/tasks/:taskId/delete', (req, res) => {
 // <form action="/tasks/{{foundtask._id}}/update" method="POST">
 router.post('/tasks/:id/update', (req, res) => {
   Task.findByIdAndUpdate(req.params.id, req.body, { new: true })
-    .then(updatedtask => res.status(200).json({ task: updatedtask }))
+    .then(updatedTask => res.status(200).json({ task: updatedTask }))
     .catch(err => next(err));
 });
 
@@ -50,9 +49,9 @@ router.post('/tasks/:id/update', (req, res) => {
 // GET route for getting the task details
 // ****************************************************************************************
 
-router.get('/tasks/:sometaskId', (req, res) => {
-  Task.findById(req.params.sometaskId)
-    .then(foundtask => res.status(200).json({ task: foundtask }))
+router.get('/tasks/:TaskId', (req, res) => {
+  Task.findById(req.params.TaskId)
+    .then(foundTask => res.status(200).json({ task: foundTask }))
     .catch(err => next(err));
 });
 

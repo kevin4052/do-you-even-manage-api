@@ -2,11 +2,15 @@ const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema(
   {
-    username: {
+    firstName: {
       type: String,
       trim: true,
-      required: [true, 'Username is required.'],
-      unique: true
+      required: [true, 'First name is required.']
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      required: [true, 'Last name is required.']
     },
     email: {
       type: String,
@@ -24,15 +28,18 @@ const userSchema = new Schema(
       type: String,
       default: 'https://icon-library.com/images/profile-picture-icon/profile-picture-icon-20.jpg'
     },
+    teams: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Team"}]
+    },
+    projects: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Project"}]
+    },
     myTasks: {
       type: [{ type: Schema.Types.ObjectId, ref: "Task"}]
     },
     comments: {
       type: [{ type: Schema.Types.ObjectId, ref: "Comment"}]
     },
-    projects: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Project"}]
-    }
   },
   {
     timestamps: true

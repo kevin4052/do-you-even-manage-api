@@ -10,7 +10,9 @@ const User = require('../models/User.model');
 
 const routeGuard = require('../configs/route-guard.config');
 
-// .post() route ==> to process form data
+// ****************************************************************************************
+// POST - validate and create user
+// ****************************************************************************************
 router.post('/signup', (req, res, next) => {
   const { username, email, password } = req.body;
 
@@ -63,6 +65,9 @@ router.post('/signup', (req, res, next) => {
     .catch(err => next(err));
 });
 
+// ****************************************************************************************
+// POST - validate and login user
+// ****************************************************************************************
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, failureDetails) => {
     if (err) {
@@ -83,11 +88,17 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+// ****************************************************************************************
+// POST - logout user
+// ****************************************************************************************
 router.post('/logout', routeGuard, (req, res, next) => {
   req.logout();
   res.status(200).json({ message: 'Logout successful!' });
 });
 
+// ****************************************************************************************
+// GET - check if user is logged in
+// ****************************************************************************************
 router.get('/isLoggedIn', (req, res) => {
   if (req.user) {
     console.log('here: ', req.user);

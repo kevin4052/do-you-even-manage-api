@@ -9,7 +9,6 @@ cloudinary.config({
 });
 
 const storage = new CloudinaryStorage({
-  // cloudinary: cloudinary,
   cloudinary,
   folder: 'my-app-folder-name', // The name of the folder in cloudinary
   allowedFormats: ['jpg', 'png'],
@@ -19,5 +18,4 @@ const storage = new CloudinaryStorage({
   }
 });
 
-//                      storage: storage
 module.exports = multer({ storage });
