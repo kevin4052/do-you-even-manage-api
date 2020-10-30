@@ -19,6 +19,7 @@ router.post('/tasks', (req, res, next) => {
 
 router.get('/tasks', (req, res) => {
   Task.find()
+    .populate('User')
     .then(tasksFromDB => res.status(200).json({ tasks: tasksFromDB }))
     .catch(err => next(err));
 });
