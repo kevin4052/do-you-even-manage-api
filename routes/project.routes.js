@@ -2,15 +2,36 @@ const express = require('express');
 const router = express.Router();
 
 const Project = require('../models/Project.model');
+const Team = require('../models/Team.model');
+const User = require('../models/User.model');
 
 // ****************************************************************************************
 // POST - create a project
 // ****************************************************************************************
 router.post('/project', (req, res, next) => {
-  Project.create(req.body)
-      .then(projectDoc => res.status(200).json({ project: projectDoc }))
-      .catch(err => next(err));
+  const { name, description, teamId } = req.body;
+  const user = req.user;
+  Team
+    .findById(teamId)
+    .then(foundTeam => {
+
+      console.log('team from profect create', foundTeam);
+
+      Project
+        .create(req.body)
+        .then(projectDoc => {
+
+          foundTeam.projects.push(projectDoc._id);
+          foundTeam.save().then()  // not finished.... need to workout binding strategy
+          res.status(200).json({ project: projectDoc });
+
+        })
+        .catch(err => next(err));
+
+    })
+    .catch(err => next(err));
 });
+  
 
 // ****************************************************************************************
 // GET route to get all the projects

@@ -14,11 +14,11 @@ const routeGuard = require('../configs/route-guard.config');
 // POST - validate and create user
 // ****************************************************************************************
 router.post('/signup', (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
-  console.log(username, email, password);
+  // console.log(firstName, lastName, email, password);
 
-  if (!username || !email || !password) {
+  if (!firstName || !lastName || !email || !password) {
     res.status(401).json({
       message: 'All fields are mandatory. Please provide your username, email and password.'
     });
@@ -39,7 +39,8 @@ router.post('/signup', (req, res, next) => {
     .then(salt => bcryptjs.hash(password, salt))
     .then(hashedPassword => {
       return User.create({
-        username,
+        firstName,
+        lastName,
         email,
         passwordHash: hashedPassword
       })

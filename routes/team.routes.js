@@ -24,10 +24,7 @@ router.post('/teams', (req, res, next) => {
       User
         .findByIdAndUpdate(user._id, user, { new: true })
         .then(updatedUser => {
-
-          // console.log({ updatedUser });
-          res.status(200).json({ team: teamDoc, user });
-
+          res.status(200).json({ team: teamDoc, user: updatedUser });
         })
         .catch(err => console.log({ err }));
     })
@@ -35,10 +32,13 @@ router.post('/teams', (req, res, next) => {
 });
 
 // ****************************************************************************************
-// GET route to get all user related teams
+// GET route for all user related teams
 // ****************************************************************************************
-router.get('/teams/:userId', (req, res, next) => {
-  Team.find()
+router.get('/user-teams', (req, res, next) => {
+  const user = req.user;
+  const { teams } = user;
+
+  Team.find({ _id: { $in: teams } })
     .then(teamDoc => res.status(200).json({ teams: teamDoc }))
     .catch(err => next(err));
 });
