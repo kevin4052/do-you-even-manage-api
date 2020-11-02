@@ -102,7 +102,7 @@ router.post('/logout', routeGuard, (req, res, next) => {
 // ****************************************************************************************
 router.get('/isLoggedIn', (req, res) => {
   if (req.user) {
-    console.log('here: ', req.user);
+    // console.log('here: ', req.user);
     req.user.passwordHash = undefined;
     res.status(200).json({ user: req.user });
     return;

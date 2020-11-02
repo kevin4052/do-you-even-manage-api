@@ -9,27 +9,48 @@ const User = require('../models/User.model');
 // POST - create a project
 // ****************************************************************************************
 router.post('/project', (req, res, next) => {
-  const { name, description, teamId } = req.body;
+  const { name, description, members, teamId } = req.body;
   const user = req.user;
-  Team
-    .findById(teamId)
-    .then(foundTeam => {
 
-      console.log('team from profect create', foundTeam);
+  const newProject = {
+    name,
+    description,
+    team: teamId,
+    members: [...members, user._id]
+  }  
 
-      Project
-        .create(req.body)
-        .then(projectDoc => {
+  Project
+    .create(newProject)
+    .then(projectDoc => {
 
-          foundTeam.projects.push(projectDoc._id);
-          foundTeam.save().then()  // not finished.... need to workout binding strategy
-          res.status(200).json({ project: projectDoc });
+      Team
+        .findById(teamId)
+        .then(async teamDoc => {
 
+          // console.log("team project array", teamDoc.projects)
+          // add new project id to related team
+          teamDoc.projects.push(projectDoc._id);
+          const updatedTeam = await teamDoc.save();
+
+          // *******************************************
+          // need to add project to all project members
+          // *******************************************
+
+          // add new project to related user
+          user.projects.push(projectDoc);
+          User
+            .findByIdAndUpdate(user._id, user, { new: true })
+            .then(updatedUser => {
+    
+              res.status(200).json({ project: projectDoc, user: updatedUser, team: updatedTeam });
+    
+            })
+            .catch(err => next(err));
         })
         .catch(err => next(err));
-
     })
     .catch(err => next(err));
+
 });
   
 
