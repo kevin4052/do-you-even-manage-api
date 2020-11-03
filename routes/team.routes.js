@@ -61,7 +61,7 @@ router.get('/teams', (req, res, next) => {
 // ****************************************************************************************
 // GET route for getting the team details
 // ****************************************************************************************
-router.get('/teams/:teamId', (req, res) => {
+router.get('/teams/:teamId', (req, res, next) => {
   Team
     .findById(req.params.teamId)
     .then(foundTeam => res.status(200).json({ team: foundTeam }))
@@ -71,25 +71,72 @@ router.get('/teams/:teamId', (req, res) => {
 // ****************************************************************************************
 // POST route to save the updates
 // ****************************************************************************************
-router.post('/teams/:teamId/update', (req, res) => {
+router.post('/teams/:teamId/update', (req, res, next) => {
+  const { name, members, projects } = req.body;
+  const { teamId } = req.params;
+
   Team
-    .findByIdAndUpdate(req.params.teamId, req.body, { new: true })
+    .findByIdAndUpdate(teamId, { name, members, projects }, { new: true })
     .then(updatedTeam => res.status(200).json({ team: updatedTeam }))
+    .catch(err => next(err));
+});
+
+// ****************************************************************************************
+// POST route to remove a member from a team
+// ****************************************************************************************
+router.post('/teams/:teamId/remove-member', (req, res, next) => {
+  const { memberId } = req.body;
+  const { teamId } = req.params;
+
+  Team
+    .findByIdAndUpdate(teamId, { $pull: { members: memberId } }, { new: true })
+    .then(updatedTeam => {
+      
+      // console.log({ updatedTeam });
+
+      User
+        .findByIdAndUpdate(memberId, { $pull: { teams: teamId } }, { new: true })
+        .then(updatedUser => {
+          // console.log({ updatedUser });
+
+          res.status(200).json({ team: updatedTeam });
+        })
+        .catch(err => next(err));
+    })
     .catch(err => next(err));
 });
 
 // ****************************************************************************************
 // POST route to delete the team
 // ****************************************************************************************
-router.post('/teams/:teamId/delete', (req, res) => {
+router.post('/teams/:teamId/delete', (req, res, next) => {
   const { teamId } = req.params;
 
   Team
-    .findByIdAndRemove(teamId)
-    .then(() => {
-      res.json({ message: 'Successfully removed!' })
+    .findById(teamId)
+    .then(foundTeam => {
+      const { members } = foundTeam;
+
+      // find all team members and pull the team Id from the user.teams
+      User
+        .updateMany({ _id: { $in: members } }, { $pull: { teams: teamId } })
+        .then(() => {
+          // console.log("updated users", updatedUser)
+
+          Team
+            .findByIdAndRemove(foundTeam._id)
+            .then(() => {
+
+              res.json({ message: 'Successfully removed!' });
+
+            })
+            .catch(err => next(err));
+        })
+        .catch(err => next(err));
+
     })
     .catch(err => next(err));
+
 });
 
 module.exports = router;
