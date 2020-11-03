@@ -12,7 +12,8 @@ passport.use(
       usernameField: 'email'
     },
     (email, password, next) => {
-      User.findOne({ email })
+      User
+        .findOne({ email })
         .then(userFromDB => {
           console.log('in pass: ', bcryptjs.compareSync(password, userFromDB.passwordHash));
           if (!userFromDB) {

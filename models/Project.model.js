@@ -14,9 +14,6 @@ const projectSchema = new Schema (
         },
         team: {
             type: Schema.Types.ObjectId, ref: "Team"
-        },
-        members: {
-            type: [{ type: Schema.Types.ObjectId, ref: "User"}]
         }
     },
     {

@@ -31,10 +31,7 @@ const userSchema = new Schema(
     teams: {
       type: [{ type: Schema.Types.ObjectId, ref: "Team"}]
     },
-    projects: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Project"}]
-    },
-    myTasks: {
+    tasks: {
       type: [{ type: Schema.Types.ObjectId, ref: "Task"}]
     },
     comments: {

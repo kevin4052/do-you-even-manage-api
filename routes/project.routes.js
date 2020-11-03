@@ -3,7 +3,6 @@ const router = express.Router();
 
 const Project = require('../models/Project.model');
 const Team = require('../models/Team.model');
-const User = require('../models/User.model');
 
 // ****************************************************************************************
 // POST - create a project
@@ -15,13 +14,14 @@ router.post('/project', (req, res, next) => {
   const newProject = {
     name,
     description,
-    team: teamId,
-    members: [...members, user._id]
+    team: teamId
   }  
 
   Project
     .create(newProject)
     .then(projectDoc => {
+
+      console.log('projects', projectDoc)
 
       Team
         .findById(teamId)
@@ -31,26 +31,26 @@ router.post('/project', (req, res, next) => {
           // add new project id to related team
           teamDoc.projects.push(projectDoc._id);
           const updatedTeam = await teamDoc.save();
-
-          // *******************************************
-          // need to add project to all project members
-          // *******************************************
-
-          // add new project to related user
-          user.projects.push(projectDoc);
-          User
-            .findByIdAndUpdate(user._id, user, { new: true })
-            .then(updatedUser => {
     
-              res.status(200).json({ project: projectDoc, user: updatedUser, team: updatedTeam });
-    
-            })
-            .catch(err => next(err));
+          res.status(200).json({ project: projectDoc, user: updatedUser, team: updatedTeam });
+          
         })
         .catch(err => next(err));
     })
     .catch(err => next(err));
 
+});
+
+// ****************************************************************************************
+// GET route for all user related projects
+// ****************************************************************************************
+router.get('/user-projects', (req, res, next) => {
+  const user = req.user;
+  const { projects } = user;
+
+  Project.find({ _id: { $in: projects } })
+    .then(projectsDoc => res.status(200).json({ projects: projectsDoc }))
+    .catch(err => next(err));
 });
   
 

@@ -3,30 +3,34 @@ const router = express.Router();
 
 const Team = require('../models/Team.model');
 const User = require('../models/User.model');
+const Project = require('../models/Project.model');
+const Task = require('../models/Task.model');
 
 // ****************************************************************************************
 // POST - create a team
 // ****************************************************************************************
 router.post('/teams', (req, res, next) => {
   const user = req.user;
-  const { name } = req.body;
+  const { name, members } = req.body;
 
   const newTeam = {
     name,
-    members: [user._id]
+    members
   };
 
-  Team.create(newTeam)
+  Team
+    .create(newTeam)
     .then(teamDoc => {
       // console.log({ teamDoc });
-      user.teams.push(teamDoc);
 
+      // find all team members and push the team Id to the user.teams
       User
-        .findByIdAndUpdate(user._id, user, { new: true })
+        .updateMany({ _id: { $in: members } }, { $push: { teams: teamDoc._id } })
         .then(updatedUser => {
-          res.status(200).json({ team: teamDoc, user: updatedUser });
+          // console.log("updated users", updatedUser)
+          res.status(200).json({ team: teamDoc });
         })
-        .catch(err => console.log({ err }));
+        .catch(err => next(err));
     })
     .catch(err => next(err));
 });
@@ -38,7 +42,8 @@ router.get('/user-teams', (req, res, next) => {
   const user = req.user;
   const { teams } = user;
 
-  Team.find({ _id: { $in: teams } })
+  Team
+    .find({ _id: { $in: teams } })
     .then(teamDoc => res.status(200).json({ teams: teamDoc }))
     .catch(err => next(err));
 });
@@ -47,7 +52,8 @@ router.get('/user-teams', (req, res, next) => {
 // GET route to get all the teams
 // ****************************************************************************************
 router.get('/teams', (req, res, next) => {
-  Team.find()
+  Team
+    .find()
     .then(teamDoc => res.status(200).json({ teams: teamDoc }))
     .catch(err => next(err));
 });
@@ -56,7 +62,8 @@ router.get('/teams', (req, res, next) => {
 // GET route for getting the team details
 // ****************************************************************************************
 router.get('/teams/:teamId', (req, res) => {
-  Team.findById(req.params.teamId)
+  Team
+    .findById(req.params.teamId)
     .then(foundTeam => res.status(200).json({ team: foundTeam }))
     .catch(err => next(err));
 });
@@ -65,7 +72,8 @@ router.get('/teams/:teamId', (req, res) => {
 // POST route to save the updates
 // ****************************************************************************************
 router.post('/teams/:teamId/update', (req, res) => {
-  Team.findByIdAndUpdate(req.params.teamId, req.body, { new: true })
+  Team
+    .findByIdAndUpdate(req.params.teamId, req.body, { new: true })
     .then(updatedTeam => res.status(200).json({ team: updatedTeam }))
     .catch(err => next(err));
 });
@@ -74,8 +82,13 @@ router.post('/teams/:teamId/update', (req, res) => {
 // POST route to delete the team
 // ****************************************************************************************
 router.post('/teams/:teamId/delete', (req, res) => {
-  Team.findByIdAndRemove(req.params.teamId)
-    .then(() => res.json({ message: 'Successfully removed!' }))
+  const { teamId } = req.params;
+
+  Team
+    .findByIdAndRemove(teamId)
+    .then(() => {
+      res.json({ message: 'Successfully removed!' })
+    })
     .catch(err => next(err));
 });
 
