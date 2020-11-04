@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Project = require('../models/Project.model');
 const Team = require('../models/Team.model');
+const Task = require('../models/Task.model');
 
 // ****************************************************************************************
 // POST - create a project
@@ -90,9 +91,14 @@ router.post('/projects/:projectId/delete', (req, res, next) => {
         .then(updatedTeam => {
           // console.log('team after pulled project', updatedTeam);
 
-          Project.findByIdAndRemove(req.params.projectId)
-              .then(() => res.json({ message: 'Successfully removed!' }))
-              .catch(err => next(err));
+          Task
+            .deleteMany({ _id: { $in: projectDoc.tasks } })
+            .then(async () => {
+
+              await projectDoc.deleteOne().catch(err => next(err));
+              res.json({ message: 'Successfully removed!' });
+              
+            }).catch(err => next(err));
         })
         .catch(err => next(err));
     })

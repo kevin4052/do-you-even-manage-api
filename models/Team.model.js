@@ -11,6 +11,9 @@ const teamSchema = new Schema (
         },
         projects: {
             type: [{ type: Schema.Types.ObjectId, ref: "Project"}]
+        },
+        owner: {
+            type: Schema.Types.ObjectId, ref: "User"
         }
     },
     {

@@ -12,16 +12,16 @@ const taskSchema = new Schema(
     dueDate: {
       type: Date
     },
-    creator: {
-      type: Schema.Types.ObjectId, ref: "User"
+    project: {
+      type: Schema.Types.ObjectId, ref: "Project" 
     },
-    assignees: {
-      type: [{ type: Schema.Types.ObjectId, ref: "User" }]
+    assigned: {
+      type: Schema.Types.ObjectId, ref: "User" 
     },
     comments: {
       type: [{ type: Schema.Types.ObjectId, ref: "Comment"}]
     },
-    checkList: { 
+    checklist: { 
       type : Array, 
       default : [] 
     },
