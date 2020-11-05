@@ -109,33 +109,42 @@ router.post('/teams/:teamId/remove-member', (req, res, next) => {
 // ****************************************************************************************
 // POST route to delete the team
 // ****************************************************************************************
-router.post('/teams/:teamId/delete', (req, res, next) => {
+router.post('/teams/:teamId/delete', async (req, res, next) => {
   const { teamId } = req.params;
 
   Team
     .findById(teamId)
-    .then(foundTeam => {
-      const { members } = foundTeam;
+    .then(async foundTeam => {
 
-      // find all team members and pull the team Id from the user.teams
-      User
-        .updateMany({ _id: { $in: members } }, { $pull: { teams: teamId } })
-        .then(() => {
-          // console.log("updated users", updatedUser)
-
-          Team
-            .findByIdAndRemove(foundTeam._id)
-            .then(() => {
-
-              res.json({ message: 'Successfully removed!' });
-
-            })
-            .catch(err => next(err));
-        })
-        .catch(err => next(err));
-
+      const message = await foundTeam.remove();
+      res.json({ message });
+      
     })
-    .catch(err => next(err));
+    .catch(err => next(err))
+    
+    // .findById(teamId)
+    // .then(foundTeam => {
+    //   const { members } = foundTeam;
+
+    //   // find all team members and pull the team Id from the user.teams
+    //   User
+    //     .updateMany({ _id: { $in: members } }, { $pull: { teams: teamId } })
+    //     .then(() => {
+    //       // console.log("updated users", updatedUser)
+
+    //       Team
+    //         .findByIdAndRemove(foundTeam._id)
+    //         .then(() => {
+
+    //           res.json({ message: 'Successfully removed!' });
+
+    //         })
+    //         .catch(err => next(err));
+    //     })
+    //     .catch(err => next(err));
+
+    // })
+    // .catch(err => next(err));
 
 });
 

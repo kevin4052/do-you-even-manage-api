@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const bcryptjs = require('bcryptjs');
 const saltRounds = 10;
+
 const passport = require('passport');
 
 const User = require('../models/User.model');

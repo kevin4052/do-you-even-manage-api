@@ -7,3 +7,4 @@ npm-debug.log
 # Environment Variables should NEVER be published BUT FOR THE LEARNING PURPOSES WE WILL PUBLISH IT
 .env
 package-lock.json
+seed.js
