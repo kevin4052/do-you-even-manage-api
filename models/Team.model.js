@@ -29,8 +29,7 @@ teamSchema.pre('remove', async function (next) {
     const taskIDs = await Task.find({ project: { $in: projectIDs } }, ['_id']).exec();
     
     User.updateMany({ _id: { $in: this.members } }, { $pull: { teams: this._id } }).exec();
-    User.updateMany({ _id: { $in: this.members } }, { $pull: { tasks: { $in: taskIDs } } }).exec();
-    
+    User.updateMany({ _id: { $in: this.members } }, { $pull: { tasks: { $in: taskIDs } } }).exec();    
     Task.deleteMany({ project: {$in: projectIDs }}).exec();
     Project.deleteMany({ _id: {$in: projectIDs }}).exec();
 

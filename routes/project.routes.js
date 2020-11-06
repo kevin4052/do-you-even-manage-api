@@ -3,7 +3,6 @@ const router = express.Router();
 
 const Project = require('../models/Project.model');
 const Team = require('../models/Team.model');
-const Task = require('../models/Task.model');
 
 // ****************************************************************************************
 // POST - create a project
@@ -20,20 +19,15 @@ router.post('/projects', (req, res, next) => {
   Project
     .create(newProject)
     .then(projectDoc => {
-
       console.log('projects', projectDoc);
-
       Team
         .findById(teamId)
         .then(async teamDoc => {
-
           // console.log("team project array", teamDoc.projects)
           // add new project id to related team
           teamDoc.projects.push(projectDoc._id);
-          const updatedTeam = await teamDoc.save();
-    
-          res.status(200).json({ project: projectDoc, team: updatedTeam });
-          
+          const updatedTeam = await teamDoc.save();    
+          res.status(200).json({ project: projectDoc, team: updatedTeam });          
         })
         .catch(err => next(err));
     })
@@ -83,24 +77,9 @@ router.post('/projects/:projectId/delete', (req, res, next) => {
 
   Project
     .findById(projectId)
-    .then(projectDoc => {
-      // console.log('project to delete', projectDoc);
-
-      Team
-        .findByIdAndUpdate(projectDoc.team, { $pull: { projects: projectDoc._id } }, { new: true })
-        .then(updatedTeam => {
-          // console.log('team after pulled project', updatedTeam);
-
-          Task
-            .deleteMany({ _id: { $in: projectDoc.tasks } })
-            .then(async () => {
-
-              await projectDoc.deleteOne().catch(err => next(err));
-              res.json({ message: 'Successfully removed!' });
-              
-            }).catch(err => next(err));
-        })
-        .catch(err => next(err));
+    .then(async projectDoc => {
+      await projectDoc.remove();
+      res.status(200).json({ message: 'Successfully removed!' });
     })
     .catch(err => next(err));
 

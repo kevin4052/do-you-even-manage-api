@@ -1,4 +1,8 @@
 const { Schema, model } = require('mongoose');
+const User = require('../models/User.model');
+const Team = require('../models/Team.model');
+const Project = require('../models/Project.model');
+const Task = require('../models/Task.model');
 
 const taskSchema = new Schema(
   {
@@ -34,6 +38,12 @@ const taskSchema = new Schema(
     timestamps: true
   }
 );
+
+taskSchema.pre('remove', async function (next) {  
+  Project.findByIdAndUpdate(this.project, { $pull: { tasks: this._id } }).exec();
+  User.findByIdAndUpdate(this.assigned, { $pull: { tasks: this._id } }).exec();   
+  next()
+});
 
 
 

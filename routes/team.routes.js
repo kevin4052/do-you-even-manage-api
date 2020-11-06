@@ -3,8 +3,6 @@ const router = express.Router();
 
 const Team = require('../models/Team.model');
 const User = require('../models/User.model');
-const Project = require('../models/Project.model');
-const Task = require('../models/Task.model');
 
 // ****************************************************************************************
 // POST - create a team
@@ -22,7 +20,6 @@ router.post('/teams', (req, res, next) => {
     .create(newTeam)
     .then(teamDoc => {
       // console.log({ teamDoc });
-
       // find all team members and push the team Id to the user.teams
       User
         .updateMany({ _id: { $in: members } }, { $push: { teams: teamDoc._id } })
@@ -90,15 +87,12 @@ router.post('/teams/:teamId/remove-member', (req, res, next) => {
 
   Team
     .findByIdAndUpdate(teamId, { $pull: { members: memberId } }, { new: true })
-    .then(updatedTeam => {
-      
+    .then(updatedTeam => {      
       // console.log({ updatedTeam });
-
       User
         .findByIdAndUpdate(memberId, { $pull: { teams: teamId } }, { new: true })
         .then(updatedUser => {
           // console.log({ updatedUser });
-
           res.status(200).json({ team: updatedTeam });
         })
         .catch(err => next(err));
@@ -116,7 +110,7 @@ router.post('/teams/:teamId/delete', async (req, res, next) => {
     .findById(teamId)
     .then(async foundTeam => {
       await foundTeam.remove();
-      res.json({ message: 'Successfully removed!' })     
+      res.status(200).json({ message: 'Successfully removed!' })     
     })
     .catch(err => next(err));
 
