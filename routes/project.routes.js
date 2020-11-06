@@ -8,12 +8,12 @@ const Team = require('../models/Team.model');
 // POST - create a project
 // ****************************************************************************************
 router.post('/projects', (req, res, next) => {
-  const { name, description, teamId } = req.body;
+  const { name, description, team } = req.body;
 
   const newProject = {
     name,
     description,
-    team: teamId
+    team
   }  
 
   Project
@@ -21,7 +21,7 @@ router.post('/projects', (req, res, next) => {
     .then(projectDoc => {
       console.log('projects', projectDoc);
       Team
-        .findById(teamId)
+        .findById(team)
         .then(async teamDoc => {
           // console.log("team project array", teamDoc.projects)
           // add new project id to related team
@@ -41,7 +41,19 @@ router.post('/projects', (req, res, next) => {
 router.get('/projects', (req, res, next) => {
   Project
     .find()
-    .then(projectDoc => res.status(200).json({ project: projectDoc }))
+    .then(projectDoc => res.status(200).json({ projects: projectDoc }))
+    .catch(err => next(err));
+});
+
+// ****************************************************************************************
+// GET route to get all the projects related to one team
+// ****************************************************************************************
+router.get('/team-projects/:teamId', (req, res, next) => {
+  const { teamId } = req.params;
+
+  Project
+    .find({ team: teamId })
+    .then(projectDoc => res.status(200).json({ projects: projectDoc }))
     .catch(err => next(err));
 });
 

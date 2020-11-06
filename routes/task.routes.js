@@ -41,6 +41,30 @@ router.get('/tasks', (req, res, next) => {
 });
 
 // ****************************************************************************************
+// GET route to get all the user tasks
+// ****************************************************************************************
+router.get('/user-tasks', (req, res, next) => {
+  const user = req.user;
+  const { tasks } = user;
+  Task
+    .find({ _id: { $in: tasks } })
+    .then(tasksFromDB => res.status(200).json({ tasks: tasksFromDB }))
+    .catch(err => next(err));
+});
+
+// ****************************************************************************************
+// GET route to get all the project tasks
+// ****************************************************************************************
+router.get('/project-tasks/:projectId', (req, res, next) => {
+  const { projectId } = req.params;
+
+  Task
+    .find({ project: projectId })
+    .then(tasksFromDB => res.status(200).json({ tasks: tasksFromDB }))
+    .catch(err => next(err));
+});
+
+// ****************************************************************************************
 // GET route for getting the task details
 // ****************************************************************************************
 router.get('/tasks/:taskId', (req, res, next) => {

@@ -19,7 +19,7 @@ router.post('/teams', (req, res, next) => {
   Team
     .create(newTeam)
     .then(teamDoc => {
-      // console.log({ teamDoc });
+      console.log({ newTeam: teamDoc });
       // find all team members and push the team Id to the user.teams
       User
         .updateMany({ _id: { $in: members } }, { $push: { teams: teamDoc._id } })
