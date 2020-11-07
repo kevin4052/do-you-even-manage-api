@@ -41,6 +41,7 @@ router.get('/user-teams', (req, res, next) => {
 
   Team
     .find({ _id: { $in: teams } })
+    .populate('projects')
     .then(teamDoc => res.status(200).json({ teams: teamDoc }))
     .catch(err => next(err));
 });
