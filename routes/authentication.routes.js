@@ -113,4 +113,22 @@ router.get('/isLoggedIn', (req, res) => {
   res.status(401).json({ message: 'Unauthorized access!' });
 });
 
+// ****************************************************************************************
+// GET - get all users
+// ****************************************************************************************
+router.get('/get-users', (req, res) => {
+  User
+    .find()
+    .then(usersFromDB => {
+      const userList = usersFromDB.map(user => {
+        user.passwordHash = undefined;
+        return user;
+      });
+
+      res.status(200).json({ users: userList });
+    })
+    .catch(err => next(err));
+    
+});
+
 module.exports = router;
