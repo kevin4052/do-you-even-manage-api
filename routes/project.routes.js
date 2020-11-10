@@ -63,6 +63,7 @@ router.get('/team-projects/:teamId', (req, res, next) => {
 router.get('/projects/:projectId', (req, res) => {
   Project
     .findById(req.params.projectId)
+    .populate('tasks')
     .then(foundProject => res.status(200).json({ project: foundProject }))
     .catch(err => next(err));
 });
