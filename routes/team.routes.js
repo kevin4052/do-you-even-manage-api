@@ -41,7 +41,13 @@ router.get('/user-teams', (req, res, next) => {
 
   Team
     .find({ _id: { $in: teams } })
-    .populate('projects')
+    .populate('projects members')
+    .populate({
+      path: 'projects',
+      populate: {
+        path: 'tasks'
+      }
+    })
     .then(teamDoc => res.status(200).json({ teams: teamDoc }))
     .catch(err => next(err));
 });
@@ -62,6 +68,13 @@ router.get('/teams', (req, res, next) => {
 router.get('/teams/:teamId', (req, res, next) => {
   Team
     .findById(req.params.teamId)
+    .populate('projects members')
+    .populate({
+      path: 'projects',
+      populate: {
+        path: 'tasks'
+      }
+    })
     .then(foundTeam => res.status(200).json({ team: foundTeam }))
     .catch(err => next(err));
 });
