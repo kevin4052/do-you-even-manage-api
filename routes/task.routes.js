@@ -48,6 +48,7 @@ router.get('/user-tasks', (req, res, next) => {
   const { tasks } = user;
   Task
     .find({ _id: { $in: tasks } })
+    .populate('project')
     .then(tasksFromDB => res.status(200).json({ tasks: tasksFromDB }))
     .catch(err => next(err));
 });
