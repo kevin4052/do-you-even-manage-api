@@ -3,6 +3,9 @@ const router = express.Router();
 
 const Team = require('../models/Team.model');
 const User = require('../models/User.model');
+const Project = require('../models/Project.model');
+const Task = require('../models/Task.model');
+
 
 // ****************************************************************************************
 // POST - create a team
@@ -123,8 +126,21 @@ router.post('/teams/:teamId/delete', async (req, res, next) => {
   Team
     .findById(teamId)
     .then(async foundTeam => {
-      await foundTeam.remove();
-      res.status(200).json({ message: 'Successfully removed!' })     
+      // await foundTeam.remove();
+      // res.status(200).json({ message: 'Successfully removed!' });
+
+      const taskIDs = await Task.find({ project: { $in: foundTeam.projects } }, ['_id']).exec();
+
+      // removes all dependencies of selected team
+      await User.updateMany({ _id: { $in: foundTeam.members } }, { $pull: { teams: foundTeam._id } }).exec();
+      await User.updateMany({ _id: { $in: foundTeam.members } }, { $pull: { tasks: { $in: taskIDs } } }).exec();    
+      await Task.deleteMany({ project: {$in: foundTeam.projects }}).exec();
+      await Project.deleteMany({ _id: {$in: foundTeam.projects }}).exec();
+
+      foundTeam
+        .deleteOne()
+        .then(() => res.status(200).json({ message: 'Successfully removed!' }) )
+        .catch(err => next(err));
     })
     .catch(err => next(err));
 

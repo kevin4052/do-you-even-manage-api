@@ -25,13 +25,13 @@ const teamSchema = new Schema (
 );
 
 teamSchema.pre('remove', async function (next) {    
-    const projectIDs = await Project.find({ team: this._id }, ['_id']).exec();
-    const taskIDs = await Task.find({ project: { $in: projectIDs } }, ['_id']).exec();
+    // const projectIDs = await Project.find({ team: this._id }, ['_id']).exec();
+    const taskIDs = await Task.find({ project: { $in: this.projects } }, ['_id']).exec();
     
     User.updateMany({ _id: { $in: this.members } }, { $pull: { teams: this._id } }).exec();
     User.updateMany({ _id: { $in: this.members } }, { $pull: { tasks: { $in: taskIDs } } }).exec();    
-    Task.deleteMany({ project: {$in: projectIDs }}).exec();
-    Project.deleteMany({ _id: {$in: projectIDs }}).exec();
+    Task.deleteMany({ project: {$in: this.projects }}).exec();
+    Project.deleteMany({ _id: {$in: this.projects }}).exec();
 
     next()
 });

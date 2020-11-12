@@ -93,8 +93,17 @@ router.post('/tasks/:taskId/delete', (req, res, next) => {
   Task
     .findById(taskId)
     .then(async foundTask => {
-      await foundTask.remove();
-      res.status(200).json({ message: 'Successfully removed!' });
+      // await foundTask.remove();
+      // res.status(200).json({ message: 'Successfully removed!' });
+
+      // removes all dependencies of selected task
+      Project.findByIdAndUpdate(foundTask.project, { $pull: { tasks: foundTask._id } }).exec();
+      User.findByIdAndUpdate(foundTask.assigned, { $pull: { tasks: foundTask._id } }).exec();
+
+      foundTask
+        .deleteOne()
+        .then(() => res.status(200).json({ message: 'Successfully removed!' }) )
+        .catch(err => next(err));
     })
     .catch(err => next(err));
 

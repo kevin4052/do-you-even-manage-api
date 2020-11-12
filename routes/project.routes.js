@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const Project = require('../models/Project.model');
+const User = require('../models/User.model');
 const Team = require('../models/Team.model');
+const Project = require('../models/Project.model');
+const Task = require('../models/Task.model');
 
 // ****************************************************************************************
 // POST - create a project
@@ -64,6 +66,18 @@ router.get('/projects/:projectId', (req, res) => {
   Project
     .findById(req.params.projectId)
     .populate('tasks team')
+    .populate({
+      path: 'team',
+      populate: {
+        path: 'members'
+      }
+    })
+    .populate({
+      path: 'tasks',
+      populate: {
+        path: 'assigned'
+      }
+    })
     .then(foundProject => res.status(200).json({ project: foundProject }))
     .catch(err => next(err));
 });
@@ -88,11 +102,22 @@ router.post('/projects/:projectId/update', (req, res) => {
 router.post('/projects/:projectId/delete', (req, res, next) => {
   const { projectId } = req.params;
 
+  // console.log({ projectId });
+
   Project
     .findById(projectId)
     .then(async projectDoc => {
-      await projectDoc.remove();
-      res.status(200).json({ message: 'Successfully removed!' });
+      // await projectDoc.remove();
+
+      // removes all dependencies of selected project
+      await Team.findByIdAndUpdate(projectDoc.team, { $pull: { projects: projectDoc._id } });
+      await User.updateMany({ tasks: { $in: projectDoc.tasks } }, { $pull: { tasks: { $in: projectDoc.tasks } } });    
+      await Task.deleteMany({ project: projectDoc._id });
+      projectDoc
+        .deleteOne()
+        .then(() => res.status(200).json({ message: 'Successfully removed!' }) )
+        .catch(err => next(err));  
+      // res.status(200).json({ message: 'Successfully removed!' })    
     })
     .catch(err => next(err));
 

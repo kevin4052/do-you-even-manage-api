@@ -45,6 +45,4 @@ taskSchema.pre('remove', async function (next) {
   next()
 });
 
-
-
 module.exports = model('Task', taskSchema);

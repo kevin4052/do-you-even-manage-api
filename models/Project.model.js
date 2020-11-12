@@ -1,8 +1,7 @@
 const { Schema, model } = require('mongoose');
-const User = require('../models/User.model');
-const Team = require('../models/Team.model');
-const Project = require('../models/Project.model');
-const Task = require('../models/Task.model');
+const User = require('./User.model');
+const Team = require('./Team.model');
+const Task = require('./Task.model');
 
 const projectSchema = new Schema (
     {
