@@ -86,8 +86,10 @@ router.get('/teams/:teamId', (req, res, next) => {
 // POST route to save the updates
 // ****************************************************************************************
 router.post('/teams/:teamId/update', (req, res, next) => {
-  const { name, members, projects } = req.body;
+  const { name, members, projects } = req.body.teamData;
   const { teamId } = req.params;
+
+  console.log({teamUpdate: req.body})
 
   Team
     .findByIdAndUpdate(teamId, { name, members, projects }, { new: true })
@@ -99,7 +101,7 @@ router.post('/teams/:teamId/update', (req, res, next) => {
 // POST route to remove a member from a team
 // ****************************************************************************************
 router.post('/teams/:teamId/remove-member', (req, res, next) => {
-  const { memberId } = req.body;
+  const { memberId } = req.body.teamData;
   const { teamId } = req.params;
 
   Team

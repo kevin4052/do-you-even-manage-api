@@ -6,7 +6,6 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const path = require('path');
 const createError = require('http-errors');
-// require all the packages you install
 const cors = require('cors');
 
 const app = express();

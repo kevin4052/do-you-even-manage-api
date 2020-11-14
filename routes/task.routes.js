@@ -49,6 +49,12 @@ router.get('/user-tasks', (req, res, next) => {
   Task
     .find({ _id: { $in: tasks } })
     .populate('project')
+    .populate({
+      path: 'project',
+      populate: {
+        path: 'team'
+      }
+    })
     .then(tasksFromDB => res.status(200).json({ tasks: tasksFromDB }))
     .catch(err => next(err));
 });
@@ -80,7 +86,7 @@ router.get('/tasks/:taskId', (req, res, next) => {
 // ****************************************************************************************
 router.post('/tasks/:taskId/update', (req, res, next) => {
   Task
-    .findByIdAndUpdate(req.params.taskId, req.body, { new: true })
+    .findByIdAndUpdate(req.params.taskId, req.body.taskdata, { new: true })
     .then(updatedTask => res.status(200).json({ task: updatedTask }))
     .catch(err => next(err));
 });
@@ -94,8 +100,6 @@ router.post('/tasks/:taskId/delete', (req, res, next) => {
   Task
     .findById(taskId)
     .then(async foundTask => {
-      // await foundTask.remove();
-      // res.status(200).json({ message: 'Successfully removed!' });
 
       // removes all dependencies of selected task
       Project.findByIdAndUpdate(foundTask.project, { $pull: { tasks: foundTask._id } }).exec();

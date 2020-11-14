@@ -10,11 +10,15 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  folder: 'my-app-folder-name', // The name of the folder in cloudinary
-  allowedFormats: ['jpg', 'png'],
+  // folder: 'doYouManage',
+  // allowedFormats: ['jpg', 'png'],
+  params: {
+    folder: 'doYouManage',
+    allowedFormats: ['ipg', 'png']
+  },
   // params: { resource_type: 'raw' }, => this is in case you want to upload other type of files, not just images
-  filename: function (req, file, cb) {
-    cb(null, file.originalname); // The file on cloudinary would have the same name as the original file name
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
   }
 });
 
