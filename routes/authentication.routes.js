@@ -15,9 +15,9 @@ const routeGuard = require('../configs/route-guard.config');
 // POST - validate and create user
 // ****************************************************************************************
 router.post('/signup', (req, res, next) => {
+  console.log(req.body);
   const { firstName, lastName, email, password } = req.body;
 
-  console.log(firstName, lastName, email, password);
 
   if (!firstName || !lastName || !email || !password) {
     res.status(401).json({
@@ -39,14 +39,18 @@ router.post('/signup', (req, res, next) => {
     .genSalt(saltRounds)
     .then(salt => bcryptjs.hash(password, salt))
     .then(hashedPassword => {
-      console.log({hashedPassword})
+
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        passwordHash: hashedPassword
+      }
+
+      console.log({userData});
+
       return User
-        .create({
-          firstName,
-          lastName,
-          email,
-          passwordHash: hashedPassword
-        })
+        .create(userData)
         .then(user => {
           req.login(user, err => {
             if (err) return res.status(500).json({ message: 'Something went wrong with login!' });
