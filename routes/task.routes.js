@@ -86,8 +86,11 @@ router.get('/tasks/:taskId', (req, res, next) => {
 // ****************************************************************************************
 router.post('/tasks/:taskId/update', (req, res, next) => {
   Task
-    .findByIdAndUpdate(req.params.taskId, req.body.taskdata, { new: true })
-    .then(updatedTask => res.status(200).json({ task: updatedTask }))
+    .findByIdAndUpdate(req.params.taskId, req.body.taskData, { new: true })
+    .then(updatedTask => {
+      console.log({ updatedTask })
+      res.status(200).json({ task: updatedTask })
+    })
     .catch(err => next(err));
 });
 
