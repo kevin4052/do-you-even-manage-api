@@ -15,18 +15,19 @@ passport.use(
       User
         .findOne({ email })
         .then(userFromDB => {
-          console.log('in pass: ', bcryptjs.compareSync(password, userFromDB.passwordHash));
+          console.log({ userFromDB })
+          // console.log('in pass: ', bcryptjs.compareSync(password, userFromDB.passwordHash));
           if (!userFromDB) {
             next(null, false, { message: 'Incorrect email! 🛬' });
             return;
           }
 
           if (!bcryptjs.compareSync(password, userFromDB.passwordHash)) {
-            console.log('1');
+            // console.log('1');
             next(null, false, { message: 'Incorrect password! ❌' });
             return;
           }
-          console.log('2');
+          // console.log('2');
           next(null, userFromDB);
         })
         .catch(err => next(err));

@@ -5,6 +5,7 @@ const User = require('../../models/User.model');
 // happens when user log in successfully
 passport.serializeUser((loggedInUser, next) => {
   // serialize user === save user id to the session
+  console.log('serialize', loggedInUser)
   next(null, loggedInUser._id);
 });
 
@@ -14,6 +15,7 @@ passport.serializeUser((loggedInUser, next) => {
 // .deserializeUser() keeps you in and you don't have to log in
 passport.deserializeUser((userIdFromSession, next) => {
   // deserialize user => retrieve user information from database
+  console.log({userIdFromSession})
   User.findById(userIdFromSession)
     .then(fullUserDoc => next(null, fullUserDoc))
     .catch(err => next(err));
