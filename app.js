@@ -9,6 +9,8 @@ const createError = require('http-errors');
 const cors = require('cors');
 
 const app = express();
+// require database configuration
+require('./configs/db.config');
 
 // Middleware Setup
 app.use(express.static(path.join(__dirname, 'public')));
@@ -18,8 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// require database configuration
-require('./configs/db.config');
 
 // require CORS (Cross-Origin Resource Sharing)
 app.use(
