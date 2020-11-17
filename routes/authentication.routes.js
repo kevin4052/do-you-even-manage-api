@@ -118,7 +118,7 @@ router.get('/isLoggedIn', async (req, res) => {
       res.status(200).json({user: currentUser});
       return;
   } else {
-    res.status(401).json({ message: 'Unauthorized access!' });
+    res.status(401).json({ message: 'Unauthorized access!', user: req.user });
     return;
   }
 });
