@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const http = require('http');
+const { type } = require('os');
 const app = require('../app');
 
 // catch 404 and send a not-found message
@@ -38,4 +39,4 @@ server.on('error', error => {
   }
 });
 
-server.listen(process.env.PORT, () => console.log(`Listening on http://localhost:${process.env.PORT}`));
+server.listen(process.env.PORT || 3001, () => console.log(`Listening on http://localhost:${process.env.PORT}`));
