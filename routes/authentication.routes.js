@@ -77,6 +77,7 @@ router.post('/signup', (req, res, next) => {
 // POST - validate and login user
 // ****************************************************************************************
 router.post('/login', (req, res, next) => {
+  console.log('logging in server side');
   passport.authenticate('local', (err, user, failureDetails) => {
     if (err) {
       res.status(500).json({ message: 'Something went wrong with database query.' });
@@ -89,6 +90,7 @@ router.post('/login', (req, res, next) => {
     }
 
     req.login(user, err => {
+      console.log('logging in');
       if (err) return res.status(500).json({ message: 'Something went wrong with login!' });
       user.passwordHash = undefined;
       res.status(200).json({ message: 'Login successful!', user });
