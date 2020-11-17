@@ -117,8 +117,10 @@ router.get('/isLoggedIn', async (req, res) => {
       currentUser.passwordHash = undefined;
       res.status(200).json({user: currentUser});
       return;
-  };
-  res.status(401).json({ message: 'Unauthorized access!' });
+  } else {
+    res.status(401).json({ message: 'Unauthorized access!' });
+    return;
+  }
 });
 
 // ****************************************************************************************
