@@ -85,7 +85,7 @@ router.get('/tasks/:taskId', (req, res, next) => {
 // POST route to save the updates
 // ****************************************************************************************
 router.post('/tasks/:taskId/update', (req, res, next) => {
-  console.log({ taskData: req.body.taskData })
+  // console.log({ taskData: req.body.taskData })
   Task
     .findByIdAndUpdate(req.params.taskId, req.body.taskData, { new: true })
     .then(updatedTask => {

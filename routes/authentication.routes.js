@@ -55,7 +55,7 @@ router.post('/signup', (req, res, next) => {
           req.login(user, err => {
             if (err) return res.status(500).json({ message: 'Something went wrong with login!' });
             user.passwordHash = undefined;
-            // req.session.user = user; // may need for persistent session work around
+            req.session.user = user; // may need for persistent session work around
             res.status(200).json({ message: 'Login successful!', user });
           });
         })
@@ -95,7 +95,7 @@ router.post('/login', (req, res, next) => {
       console.log('logging in');
       if (err) return res.status(500).json({ message: 'Something went wrong with login!' });
       user.passwordHash = undefined;
-      // req.session.user = user; // may need for persistent session work around
+      req.session.user = user; // may need for persistent session work around
       res.status(200).json({ message: 'Login successful!', user });
     });
   })(req, res, next);
@@ -106,6 +106,7 @@ router.post('/login', (req, res, next) => {
 // ****************************************************************************************
 router.post('/logout', routeGuard, (req, res, next) => {
   req.logout();
+  req.session.destroy()
   res.status(200).json({ message: 'Logout successful!' });
 });
 
