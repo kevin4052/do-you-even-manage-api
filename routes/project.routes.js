@@ -90,7 +90,7 @@ router.post('/projects/:projectId/update', (req, res) => {
   // const { name, description, tasks } = req.body;
 
   Project
-    .findByIdAndUpdate(projectId, req.body.projectData, { new: true })
+    .findByIdAndUpdate(projectId, req.body, { new: true })
     .then(updatedProject => res.status(200).json({ project: updatedProject }))
     .catch(err => next(err));
 
