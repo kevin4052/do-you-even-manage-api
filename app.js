@@ -12,6 +12,9 @@ const app = express();
 // require database configuration
 require('./configs/db.config');
 
+// bind user to res.sessions
+// const bindUserToSession = require('./configs/user-locals.config');
+
 // Middleware Setup
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
@@ -19,6 +22,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+// app.use(bindUserToSession);
 
 
 // require CORS (Cross-Origin Resource Sharing)
