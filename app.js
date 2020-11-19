@@ -29,7 +29,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [process.env.FRONTEND_POINT, 'https://youthful-dijkstra-ae41c9.netlify.app'],
-    credentials: true
+    credentials: true,
   })
 );
 
@@ -47,14 +47,19 @@ app.use('/api/', require('./routes/project.routes'));
 app.use('/api/', require('./routes/authentication.routes'));
 
 // Catch missing routes and forward to error handler
-app.use((req, res, next) => {
-  next(createError(404));
-});
+// app.use((req, res, next) => {
+//   next(createError(404));
+// });
 
-// Catch all error handler
-app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({ type: 'error', error: { message: error.message } });
+// // Catch all error handler
+// app.use((error, req, res, next) => {
+//   res.status(error.status || 500);
+//   res.json({ type: 'error', error: { message: error.message } });
+// });
+
+app.use((req, res, next) => {
+  // If no routes match, send them the React HTML.
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 module.exports = app;
