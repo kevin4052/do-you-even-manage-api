@@ -106,7 +106,7 @@ router.post('/login', (req, res, next) => {
 // ****************************************************************************************
 router.post('/logout', routeGuard, (req, res, next) => {
   req.logout();
-  req.session.destroy();
+  // req.session.destroy();
   res.status(200).json({ message: 'Logout successful!' });
 });
 
@@ -114,17 +114,17 @@ router.post('/logout', routeGuard, (req, res, next) => {
 // GET - check if user is logged in
 // ****************************************************************************************
 router.get('/isLoggedIn', async (req, res) => {
-  console.log({userSession: req.session.user})
+  // console.log({userSession: req.session.user})
 
   if (req.session.user) {
     // console.log('here: ', req.user);
     const currentUser = await User.findById(req.user._id).populate('teams').populate('tasks')
-    console.log({currentUser});
+    // console.log({currentUser});
     currentUser.passwordHash = undefined;
     res.status(200).json({user: currentUser});
     return;
   } else {
-    res.status(401).json({ message: 'Unauthorized access!', user: req.user });
+    res.status(401).json({ message: 'Unauthorized access!' });
     return;
   }
 });

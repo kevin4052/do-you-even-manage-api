@@ -29,10 +29,6 @@ const taskSchema = new Schema(
       type : Array, 
       default : [] 
     },
-    isCompleted: {
-      type: Boolean,
-      default: false
-    },
     status: {
       type: String,
       enum: ['todo', 'inProgress', 'complete'],
