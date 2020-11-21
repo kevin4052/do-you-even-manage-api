@@ -113,16 +113,20 @@ router.post('/logout', routeGuard, (req, res, next) => {
 // ****************************************************************************************
 // GET - check if user is logged in
 // ****************************************************************************************
-router.get('/isLoggedIn', async (req, res) => {
+router.get('/isLoggedIn', (req, res) => {
   // console.log({userSession: req.session.user})
 
-  if (req.session.user) {
-    // console.log('here: ', req.user);
-    const currentUser = await User.findById(req.user._id).populate('teams').populate('tasks')
-    // console.log({currentUser});
-    currentUser.passwordHash = undefined;
-    res.status(200).json({user: currentUser});
-    return;
+  if (req.user) {
+    User
+    .findById(req.user._id)
+    .populate('teams tasks')
+    .then(currentUser => {
+      console.log({currentUser});
+      currentUser.passwordHash = undefined;
+      res.status(200).json({user: currentUser});
+      return;
+    })
+    .catch(err => next(err));
   } else {
     res.status(401).json({ message: 'Unauthorized access!' });
     return;
