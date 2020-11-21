@@ -85,14 +85,27 @@ router.get('/tasks/:taskId', (req, res, next) => {
 // POST route to save the updates
 // ****************************************************************************************
 router.post('/tasks/:taskId/update', (req, res, next) => {
-  // console.log({ taskData: req.body.taskData })
+  const { assigned } = req.body
+  const { taskId } = req.params;
   Task
-    .findByIdAndUpdate(req.params.taskId, req.body, { new: true })
-    .then(updatedTask => {
-      console.log({ updatedTask })
-      res.status(200).json({ task: updatedTask })
-    })
-    .catch(err => next(err));
+  .findById(taskId)
+  .then(tasksFromDB => {
+
+    if (tasksFromDB.assigned !== assigned) {
+      User.findByIdAndUpdate(tasksFromDB.assigned, { $pull: { tasks: tasksFromDB._id } }).exec();
+      User.findByIdAndUpdate(assigned, { $push: { tasks: tasksFromDB._id } }).exec();
+    }
+    
+    Task
+      .findByIdAndUpdate(taskId, req.body, { new: true })
+      .then(updatedTask => {
+        console.log({ updatedTask })
+        res.status(200).json({ task: updatedTask })
+      })
+      .catch(err => next(err));
+
+  })
+  .catch(err => next(err));
 });
 
 // ****************************************************************************************
